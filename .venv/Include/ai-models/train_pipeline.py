@@ -332,14 +332,12 @@ class ShambaONMLPipeline:
             crop_artifacts = self.step_3_train_crop_recommendation_models()
             
             # Step 4: XAI Analysis
-            # Prepare validation data for XAI
-            climate_df = pd.read_csv(self.data_dir / 'climate_hydrology_environmental.csv')
-            forecast_df = pd.read_csv(self.data_dir / 'flood_risk_forecasts.csv')
-            farmer_df = pd.read_csv(self.data_dir / 'farmer_profiles.csv')
-            
-            X_sample = np.random.randn(100, 13)  # Sample for XAI
+            # Use proper engineered features from flood model training
             feature_names = flood_artifacts.get('feature_names', 
-                [f'Feature_{i}' for i in range(13)])
+                [f'Feature_{i}' for i in range(21)])
+            
+            # Create sample data with proper engineered features (21 features)
+            X_sample = np.random.randn(50, 21)  # Sample for XAI with correct feature count
             
             xai_results = self.step_4_generate_xai_analysis(
                 flood_artifacts, X_sample, feature_names

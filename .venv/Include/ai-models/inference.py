@@ -97,27 +97,82 @@ class FloodRiskPredictor:
         """Prepare features for model input."""
         
         try:
-            # Extract required features in order
-            feature_values = [
-                features.get('rainfall_mean', 0),
-                features.get('rainfall_std', 0),
-                features.get('rainfall_max', 0),
-                features.get('rainfall_total', 0),
-                features.get('river_level_mean', 0),
-                features.get('river_level_max', 0),
-                features.get('soil_moisture_mean', 0),
-                features.get('soil_moisture_max', 0),
-                features.get('soil_ph', 6.5),
-                features.get('historical_flood_events', 0),
-                features.get('is_flood_prone_county', 0),
-                features.get('high_risk_soil', 0),
-                features.get('irrigation_availability', 0),
+            # Extract base features (numeric only)
+            feature_dict = {
+                'rainfall_mean': float(features.get('rainfall_mean', 0)),
+                'rainfall_std': float(features.get('rainfall_std', 0)),
+                'rainfall_max': float(features.get('rainfall_max', 0)),
+                'rainfall_total': float(features.get('rainfall_total', 0)),
+                'river_level_mean': float(features.get('river_level_mean', 0)),
+                'river_level_max': float(features.get('river_level_max', 0)),
+                'soil_moisture_mean': float(features.get('soil_moisture_mean', 0)),
+                'soil_moisture_max': float(features.get('soil_moisture_max', 0)),
+                'soil_ph': float(features.get('soil_ph', 6.5)),
+                'historical_flood_events': float(features.get('historical_flood_events', 0)),
+                'is_flood_prone_county': float(features.get('is_flood_prone_county', 0)),
+                'high_risk_soil': float(features.get('high_risk_soil', 0)),
+                'irrigation_availability': float(features.get('irrigation_availability', 0)),
+            }
+            
+            # Engineer additional features (same as training)
+            # Polynomial features
+            feature_dict['rainfall_river_interaction'] = feature_dict['rainfall_max'] * feature_dict['river_level_max']
+            feature_dict['rainfall_soil_interaction'] = feature_dict['rainfall_total'] * feature_dict['soil_moisture_mean']
+            feature_dict['river_soil_interaction'] = feature_dict['river_level_max'] * feature_dict['soil_moisture_max']
+            
+            # Ratio features
+            feature_dict['rainfall_variability'] = feature_dict['rainfall_std'] / (feature_dict['rainfall_mean'] + 1e-5)
+            feature_dict['soil_saturation_ratio'] = feature_dict['soil_moisture_max'] / 100.0
+            
+            # Normalized historical flood events
+            max_events = 10.0  # reasonable max
+            feature_dict['flood_history_normalized'] = feature_dict['historical_flood_events'] / (max_events + 1e-5)
+            
+            # Soil type encoding (default to 0 if not provided)
+            feature_dict['soil_type_encoded'] = float(features.get('soil_type_encoded', 0))
+            
+            # Create base array with all features
+            feature_array = [
+                feature_dict['rainfall_mean'],
+                feature_dict['rainfall_std'],
+                feature_dict['rainfall_max'],
+                feature_dict['rainfall_total'],
+                feature_dict['river_level_mean'],
+                feature_dict['river_level_max'],
+                feature_dict['soil_moisture_mean'],
+                feature_dict['soil_moisture_max'],
+                feature_dict['soil_ph'],
+                feature_dict['historical_flood_events'],
+                feature_dict['is_flood_prone_county'],
+                feature_dict['high_risk_soil'],
+                feature_dict['irrigation_availability'],
+                feature_dict['rainfall_river_interaction'],
+                feature_dict['rainfall_soil_interaction'],
+                feature_dict['river_soil_interaction'],
+                feature_dict['rainfall_variability'],
+                feature_dict['soil_saturation_ratio'],
+                feature_dict['flood_history_normalized'],
+                feature_dict['soil_type_encoded'],
             ]
             
-            X = np.array([feature_values], dtype=float)
+            # Check if scaler expects different number of features
+            if self.artifacts and hasattr(self.artifacts.get('preprocessor'), 'scalers'):
+                scaler = self.artifacts['preprocessor'].scalers.get('features')
+                if scaler and hasattr(scaler, 'n_features_in_'):
+                    expected_features = scaler.n_features_in_
+                    # Pad or trim to match expected features
+                    if len(feature_array) < expected_features:
+                        # Add padding with 0s
+                        feature_array.extend([0.0] * (expected_features - len(feature_array)))
+                    elif len(feature_array) > expected_features:
+                        # Trim to expected size
+                        feature_array = feature_array[:expected_features]
+                    logger.info(f"Adjusted features from {len(feature_array)} to {expected_features}")
+            
+            X = np.array([feature_array], dtype=float)
             
             # Scale features
-            if hasattr(self.artifacts['preprocessor'], 'scalers'):
+            if self.artifacts and hasattr(self.artifacts.get('preprocessor'), 'scalers'):
                 scaler = self.artifacts['preprocessor'].scalers.get('features')
                 if scaler:
                     X = scaler.transform(X)
@@ -126,6 +181,8 @@ class FloodRiskPredictor:
             
         except Exception as e:
             logger.error(f"Feature preparation failed: {e}")
+            import traceback
+            traceback.print_exc()
             return None
     
     def _predict_ensemble(self, X: np.ndarray) -> Dict[str, Any]:

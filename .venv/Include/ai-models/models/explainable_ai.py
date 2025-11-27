@@ -347,10 +347,22 @@ class ModelTransparencyReport:
     def _analyze_features(self, X: np.ndarray, feature_names: List[str]) -> Dict[str, Any]:
         """Analyze feature statistics."""
         
-        feature_names = feature_names or [f'Feature_{i}' for i in range(X.shape[1])]
+        # Handle mismatch between feature_names and X shape
+        num_features = X.shape[1]
+        feature_names = feature_names or [f'Feature_{i}' for i in range(num_features)]
+        
+        # Trim feature_names if it has more names than X has columns
+        if len(feature_names) > num_features:
+            feature_names = feature_names[:num_features]
+        
+        # Pad feature_names if it has fewer names than X has columns
+        elif len(feature_names) < num_features:
+            feature_names = list(feature_names) + [f'Feature_{i}' for i in range(len(feature_names), num_features)]
         
         features = []
         for i, name in enumerate(feature_names):
+            if i >= num_features:
+                break
             col = X[:, i]
             features.append({
                 'name': name,

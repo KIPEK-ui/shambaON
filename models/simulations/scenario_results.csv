@@ -1,0 +1,22 @@
+event_type,severity,baseline_yield_t_ha,yield_loss_percent,actual_yield_t_ha,economic_loss_kes,recommendation,parcel_id,scenario,duration_months,price_change_percent,baseline_revenue_kes,actual_revenue_kes,revenue_change_kes,scenario_name,components,combined_yield_loss_percent,final_yield_t_ha,total_economic_loss_kes,resilience_recommendation
+flood,low,2.5,5.88,2.353,2204.999999999997,Monitor closely,0,low_flood,,,,,,,,,,,
+flood,moderate,2.5,11.76,2.206,4410.000000000001,Monitor closely,0,moderate_flood,,,,,,,,,,,
+flood,severe,2.5,17.64,2.059,6614.999999999997,Monitor closely,0,severe_flood,,,,,,,,,,,
+drought,,2.5,3.3749999999999996,2.4156250000000004,,Standard management,0,drought_3m,3.0,,,,,,,,,,
+drought,,2.5,6.749999999999999,2.33125,,Standard management,0,drought_6m,6.0,,,,,,,,,,
+market_shock,,,,,,Continue current strategy,0,market_shock,,-30.0,50000.0,35000.0,-15000.0,,,,,,
+,,,,,,,0,extreme,,,,,,Extreme Event,"{'flood': {'event_type': 'flood', 'severity': 'severe', 'baseline_yield_t_ha': 2.5, 'yield_loss_percent': 17.64, 'actual_yield_t_ha': 2.059, 'economic_loss_kes': 6614.999999999997, 'recommendation': 'Monitor closely'}, 'drought': {'event_type': 'drought', 'duration_months': 4, 'baseline_yield_t_ha': 2.5, 'yield_loss_percent': 4.5, 'actual_yield_t_ha': 2.3874999999999997, 'recommendation': 'Standard management'}, 'market_shock': {'event_type': 'market_shock', 'price_change_percent': -40, 'baseline_revenue_kes': 50000, 'actual_revenue_kes': 30000.0, 'revenue_change_kes': -20000.0, 'recommendation': 'Continue current strategy'}}",22.139999999999997,1.9465,4981.500000000001,Urgent need for diversification and irrigation investment
+flood,low,2.0,21.0,1.58,2519.9999999999995,Monitor closely,1,low_flood,,,,,,,,,,,
+flood,moderate,2.0,42.0,1.1600000000000001,5039.999999999999,Monitor closely,1,moderate_flood,,,,,,,,,,,
+flood,severe,2.0,63.0,0.74,7560.0,Switch to flood-tolerant crops,1,severe_flood,,,,,,,,,,,
+drought,,2.0,7.5,1.85,,Standard management,1,drought_3m,3.0,,,,,,,,,,
+drought,,2.0,15.0,1.7,,Standard management,1,drought_6m,6.0,,,,,,,,,,
+market_shock,,,,,,Continue current strategy,1,market_shock,,-30.0,50000.0,35000.0,-15000.0,,,,,,
+,,,,,,,1,extreme,,,,,,Extreme Event,"{'flood': {'event_type': 'flood', 'severity': 'severe', 'baseline_yield_t_ha': 2.0, 'yield_loss_percent': 63.0, 'actual_yield_t_ha': 0.74, 'economic_loss_kes': 7560.0, 'recommendation': 'Switch to flood-tolerant crops'}, 'drought': {'event_type': 'drought', 'duration_months': 4, 'baseline_yield_t_ha': 2.0, 'yield_loss_percent': 10.0, 'actual_yield_t_ha': 1.8, 'recommendation': 'Standard management'}, 'market_shock': {'event_type': 'market_shock', 'price_change_percent': -40, 'baseline_revenue_kes': 50000, 'actual_revenue_kes': 30000.0, 'revenue_change_kes': -20000.0, 'recommendation': 'Continue current strategy'}}",73.0,0.54,5256.0,Urgent need for diversification and irrigation investment
+flood,low,3.0,10.29,2.6913,11113.199999999999,Monitor closely,2,low_flood,,,,,,,,,,,
+flood,moderate,3.0,20.58,2.3826,22226.399999999998,Monitor closely,2,moderate_flood,,,,,,,,,,,
+flood,severe,3.0,30.86999999999999,2.0739,33339.6,Monitor closely,2,severe_flood,,,,,,,,,,,
+drought,,3.0,3.3749999999999996,2.89875,,Standard management,2,drought_3m,3.0,,,,,,,,,,
+drought,,3.0,6.749999999999999,2.7975,,Standard management,2,drought_6m,6.0,,,,,,,,,,
+market_shock,,,,,,Continue current strategy,2,market_shock,,-30.0,50000.0,35000.0,-15000.0,,,,,,
+,,,,,,,2,extreme,,,,,,Extreme Event,"{'flood': {'event_type': 'flood', 'severity': 'severe', 'baseline_yield_t_ha': 3.0, 'yield_loss_percent': 30.86999999999999, 'actual_yield_t_ha': 2.0739, 'economic_loss_kes': 33339.6, 'recommendation': 'Monitor closely'}, 'drought': {'event_type': 'drought', 'duration_months': 4, 'baseline_yield_t_ha': 3.0, 'yield_loss_percent': 4.5, 'actual_yield_t_ha': 2.8649999999999998, 'recommendation': 'Standard management'}, 'market_shock': {'event_type': 'market_shock', 'price_change_percent': -40, 'baseline_revenue_kes': 50000, 'actual_revenue_kes': 30000.0, 'revenue_change_kes': -20000.0, 'recommendation': 'Continue current strategy'}}",35.36999999999999,1.9389000000000003,22919.759999999995,Urgent need for diversification and irrigation investment

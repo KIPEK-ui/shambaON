@@ -130,18 +130,32 @@ class FloodRiskDataPreprocessor:
         # Aggregate climate features by parcel
         features_df = self._aggregate_climate_features(climate_df, forecast_df)
         
-        # Merge with farmer characteristics
-        features_df = features_df.merge(
-            farmer_df[['parcel_id', 'soil_type', 'soil_ph', 'irrigation_availability', 
-                      'county', 'historical_flood_events']],
-            on='parcel_id',
-            how='left'
-        )
+        # Ensure county column exists in features_df
+        if 'county' not in features_df.columns:
+            features_df['county'] = 'Unknown'
+        
+        # Merge with farmer characteristics (exclude county to avoid duplication)
+        farmer_cols = [col for col in ['soil_type', 'soil_ph', 'irrigation_availability', 
+                                       'historical_flood_events'] 
+                      if col in farmer_df.columns]
+        
+        if farmer_cols:
+            features_df = features_df.merge(
+                farmer_df[['parcel_id'] + farmer_cols],
+                on='parcel_id',
+                how='left'
+            )
+        
+        # Ensure county column exists and is not null
+        if 'county' not in features_df.columns:
+            features_df['county'] = 'Unknown'
+        features_df['county'] = features_df['county'].fillna('Unknown')
         
         # Add county-level flood risk factor
         features_df['is_flood_prone_county'] = features_df['county'].isin(FLOOD_PRONE_COUNTIES).astype(int)
         
         logger.info(f"Created feature set: {len(features_df)} parcels")
+        logger.info(f"Feature columns: {list(features_df.columns)}")
         
         return features_df, forecast_df[['parcel_id', 'flood_risk_binary', 'flood_risk_score', 'risk_class']]
     
@@ -152,38 +166,69 @@ class FloodRiskDataPreprocessor:
         # Map climate records to parcels via county/coordinates
         climate_features = []
         
+        # Ensure climate_df has county column (may have different name)
+        if 'county' not in climate_df.columns and 'County' in climate_df.columns:
+            climate_df['county'] = climate_df['County']
+        
         for parcel_id in forecast_df['parcel_id'].unique():
             forecast_row = forecast_df[forecast_df['parcel_id'] == parcel_id].iloc[0]
             
+            # Get county from forecast data
+            parcel_county = forecast_row.get('county') or forecast_row.get('County', 'Unknown')
+            
             # Get recent climate data (past 30 days)
-            recent_climate = climate_df[
-                (climate_df['county'] == forecast_row['county'])
-            ].tail(100)  # Last 100 records per county
+            if 'county' in climate_df.columns:
+                recent_climate = climate_df[
+                    (climate_df['county'] == parcel_county)
+                ].tail(100)  # Last 100 records per county
+            else:
+                # Fallback: use all data if county column not available
+                recent_climate = climate_df.tail(100)
             
             if len(recent_climate) == 0:
+                # Still create a feature record with defaults
+                features = {
+                    'parcel_id': parcel_id,
+                    'county': parcel_county,
+                    'rainfall_mean': 0,
+                    'rainfall_std': 0,
+                    'rainfall_max': 0,
+                    'rainfall_total': 0,
+                    'river_level_mean': 0,
+                    'river_level_max': 0,
+                    'soil_moisture_mean': 50,
+                    'soil_moisture_max': 70,
+                }
+                climate_features.append(features)
                 continue
             
-            # Extract rainfall statistics
-            rainfall_data = recent_climate[recent_climate['element'] == 'rainfall_mm_day']['value']
-            river_data = recent_climate[recent_climate['element'] == 'river_level_m']['value']
-            soil_moist_data = recent_climate[recent_climate['element'] == 'soil_moisture_percent']['value']
+            # Extract rainfall statistics - handle different element naming
+            rainfall_data = recent_climate[recent_climate['element'].str.contains('rainfall', case=False, na=False)]['value']
+            river_data = recent_climate[recent_climate['element'].str.contains('river', case=False, na=False)]['value']
+            soil_moist_data = recent_climate[recent_climate['element'].str.contains('soil_moisture', case=False, na=False)]['value']
             
             features = {
                 'parcel_id': parcel_id,
-                'county': forecast_row['county'],
+                'county': parcel_county,
                 'rainfall_mean': rainfall_data.mean() if len(rainfall_data) > 0 else 0,
                 'rainfall_std': rainfall_data.std() if len(rainfall_data) > 0 else 0,
                 'rainfall_max': rainfall_data.max() if len(rainfall_data) > 0 else 0,
                 'rainfall_total': rainfall_data.sum() if len(rainfall_data) > 0 else 0,
                 'river_level_mean': river_data.mean() if len(river_data) > 0 else 0,
                 'river_level_max': river_data.max() if len(river_data) > 0 else 0,
-                'soil_moisture_mean': soil_moist_data.mean() if len(soil_moist_data) > 0 else 0,
-                'soil_moisture_max': soil_moist_data.max() if len(soil_moist_data) > 0 else 0,
+                'soil_moisture_mean': soil_moist_data.mean() if len(soil_moist_data) > 0 else 50,
+                'soil_moisture_max': soil_moist_data.max() if len(soil_moist_data) > 0 else 70,
             }
             
             climate_features.append(features)
         
-        return pd.DataFrame(climate_features)
+        result_df = pd.DataFrame(climate_features)
+        
+        # Ensure county column exists
+        if 'county' not in result_df.columns:
+            result_df['county'] = 'Unknown'
+        
+        return result_df
     
     def engineer_features(self, df: pd.DataFrame, fit: bool = True) -> pd.DataFrame:
         """

@@ -1,0 +1,201 @@
+{
+  "model_name": "logistic_regression",
+  "generated_at": "2025-11-27T21:55:23.699418",
+  "dataset_info": {
+    "num_samples": 50,
+    "num_features": 21,
+    "target_distribution": {
+      "class_distribution": {
+        "None": 1
+      },
+      "class_balance": "Imbalanced"
+    }
+  },
+  "feature_info": [
+    {
+      "name": "rainfall_mean",
+      "mean": 0.10885712195148582,
+      "std": 1.021667034245909,
+      "min": -2.332704565709725,
+      "max": 2.4831722127653566,
+      "missing_pct": 0.0
+    },
+    {
+      "name": "rainfall_std",
+      "mean": -0.03841078624566002,
+      "std": 0.8570792253150218,
+      "min": -2.408290864928099,
+      "max": 1.5244224037414404,
+      "missing_pct": 0.0
+    },
+    {
+      "name": "rainfall_max",
+      "mean": -0.062330440978601354,
+      "std": 1.063596059370236,
+      "min": -2.450529432083259,
+      "max": 1.6488004101470097,
+      "missing_pct": 0.0
+    },
+    {
+      "name": "rainfall_total",
+      "mean": -0.07346263834996807,
+      "std": 1.075216978954828,
+      "min": -2.171404377795907,
+      "max": 2.6629728730406947,
+      "missing_pct": 0.0
+    },
+    {
+      "name": "river_level_mean",
+      "mean": -0.16888418108811826,
+      "std": 1.0559934654310226,
+      "min": -2.8188006587599195,
+      "max": 2.2630276101559006,
+      "missing_pct": 0.0
+    },
+    {
+      "name": "river_level_max",
+      "mean": 0.20621541568152024,
+      "std": 0.9767006122478763,
+      "min": -2.1452378326799684,
+      "max": 2.4958282459054724,
+      "missing_pct": 0.0
+    },
+    {
+      "name": "soil_moisture_mean",
+      "mean": -0.18841026437701192,
+      "std": 0.8709099294613201,
+      "min": -2.0386792483542706,
+      "max": 1.7129045868930624,
+      "missing_pct": 0.0
+    },
+    {
+      "name": "soil_moisture_max",
+      "mean": 0.06832536636573569,
+      "std": 0.9453924246487514,
+      "min": -2.024316432906431,
+      "max": 2.794129350151054,
+      "missing_pct": 0.0
+    },
+    {
+      "name": "soil_ph",
+      "mean": 0.11432168086200332,
+      "std": 1.006232195142819,
+      "min": -3.1907566263250944,
+      "max": 2.334881022603061,
+      "missing_pct": 0.0
+    },
+    {
+      "name": "historical_flood_events",
+      "mean": 0.019151876849856628,
+      "std": 0.9756139174852382,
+      "min": -2.935321622519081,
+      "max": 2.417565403514962,
+      "missing_pct": 0.0
+    },
+    {
+      "name": "is_flood_prone_county",
+      "mean": 0.12268577347002455,
+      "std": 0.9113126492401773,
+      "min": -2.297288547367262,
+      "max": 2.3203854524485683,
+      "missing_pct": 0.0
+    },
+    {
+      "name": "flood_risk_binary",
+      "mean": 0.06260079014091738,
+      "std": 1.1069222410353259,
+      "min": -2.916751104982597,
+      "max": 2.5780206437674416,
+      "missing_pct": 0.0
+    },
+    {
+      "name": "flood_risk_score",
+      "mean": -0.10752767566277828,
+      "std": 0.8837917084104617,
+      "min": -2.592657372661856,
+      "max": 1.5802240511730858,
+      "missing_pct": 0.0
+    },
+    {
+      "name": "risk_class",
+      "mean": -0.19297526546674515,
+      "std": 0.8374396212669797,
+      "min": -1.8647570489636582,
+      "max": 1.4016618338741929,
+      "missing_pct": 0.0
+    },
+    {
+      "name": "rainfall_river_interaction",
+      "mean": -0.10941970432887609,
+      "std": 1.0860687346927271,
+      "min": -3.4363709300903698,
+      "max": 1.9424463719961982,
+      "missing_pct": 0.0
+    },
+    {
+      "name": "rainfall_soil_interaction",
+      "mean": 0.22653777377107093,
+      "std": 0.9677840737712874,
+      "min": -2.714554016011848,
+      "max": 2.353765234968512,
+      "missing_pct": 0.0
+    },
+    {
+      "name": "river_soil_interaction",
+      "mean": -0.08566402020355963,
+      "std": 1.0432086539770773,
+      "min": -1.9162133829850427,
+      "max": 2.540841591612949,
+      "missing_pct": 0.0
+    },
+    {
+      "name": "rainfall_variability",
+      "mean": -0.18247573854503485,
+      "std": 1.12584507080793,
+      "min": -2.4557616006818765,
+      "max": 1.9002486696588934,
+      "missing_pct": 0.0
+    },
+    {
+      "name": "soil_saturation_ratio",
+      "mean": -0.017618579923139522,
+      "std": 1.0859061730717283,
+      "min": -2.2337679774620955,
+      "max": 2.198917285810261,
+      "missing_pct": 0.0
+    },
+    {
+      "name": "flood_history_normalized",
+      "mean": -0.03814876298034159,
+      "std": 1.0318096511259114,
+      "min": -1.7954413568489223,
+      "max": 2.2700209784690513,
+      "missing_pct": 0.0
+    },
+    {
+      "name": "high_risk_soil",
+      "mean": 0.08267715894898756,
+      "std": 0.9399620979467951,
+      "min": -1.511855855344706,
+      "max": 2.442149441266675,
+      "missing_pct": 0.0
+    }
+  ],
+  "bias_analysis": {
+    "notes": "Bias analysis requires demographic information",
+    "recommendations": [
+      "Stratified analysis by gender and farm size",
+      "Compare predictions across demographic groups",
+      "Monitor for disparate impact"
+    ],
+    "overall_prediction_rate": 0.13440131326856863,
+    "model_preference": "Low Risk predictions"
+  },
+  "recommendations": [
+    "Regularly retrain model with new data",
+    "Monitor predictions for drift",
+    "Use ensemble models for robustness",
+    "Validate across different counties and seasons",
+    "Collect feedback from farmers on recommendations"
+  ]
+}

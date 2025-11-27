@@ -1,0 +1,65 @@
+{
+  "pipeline_metadata": {
+    "execution_date": "20251127_222100",
+    "data_directory": "data",
+    "output_directory": "models",
+    "python_version": "3.13.7 (tags/v3.13.7:bcee1c3, Aug 14 2025, 14:15:11) [MSC v.1944 64 bit (AMD64)]"
+  },
+  "data_summary": {
+    "climate_records": 0,
+    "farmers": 0,
+    "crop_catalog_entries": 0
+  },
+  "flood_risk_models": {
+    "models_trained": [
+      "logistic_regression",
+      "random_forest",
+      "gradient_boosting",
+      "ensemble"
+    ],
+    "best_model": "ensemble"
+  },
+  "crop_recommendation_models": {
+    "models_trained": [
+      "knowledge_graph",
+      "decision_tree",
+      "multi_objective"
+    ]
+  },
+  "visualizations": {
+    "confusion_logistic_regression": "models\\visualizations/confusion_matrix_logistic_regression.png",
+    "confusion_random_forest": "models\\visualizations/confusion_matrix_random_forest.png",
+    "confusion_gradient_boosting": "models\\visualizations/confusion_matrix_gradient_boosting.png",
+    "confusion_comparison": "models\\visualizations/confusion_matrices_comparison.png",
+    "roc_logistic_regression": "models\\visualizations/roc_curve_logistic_regression.png",
+    "roc_random_forest": "models\\visualizations/roc_curve_random_forest.png",
+    "roc_gradient_boosting": "models\\visualizations/roc_curve_gradient_boosting.png",
+    "roc_comparison": "models\\visualizations/roc_curves_comparison.png",
+    "features_random_forest": "models\\visualizations/feature_importance_random_forest.png",
+    "features_gradient_boosting": "models\\visualizations/feature_importance_gradient_boosting.png",
+    "mean_reversion_logistic_regression": "models\\visualizations/mean_reversion_logistic_regression.png",
+    "mean_reversion_random_forest": "models\\visualizations/mean_reversion_random_forest.png",
+    "mean_reversion_gradient_boosting": "models\\visualizations/mean_reversion_gradient_boosting.png",
+    "dashboard": "models\\visualizations/performance_dashboard.png",
+    "metrics_charts": "models\\visualizations/metrics_charts.png"
+  },
+  "artifacts_saved": [
+    "flood_risk_models.pkl",
+    "crop_recommendation_models.pkl",
+    "xai_summary.json",
+    "transparency_report_*.json",
+    "simulations/scenario_results.csv",
+    "visualizations/confusion_matrices_comparison.png",
+    "visualizations/roc_curves_comparison.png",
+    "visualizations/performance_dashboard.png",
+    "visualizations/mean_reversion_*.png"
+  ],
+  "next_steps": [
+    "1. Deploy models to Streamlit application",
+    "2. Connect to Supabase backend",
+    "3. Integrate USSD interface via Africa's Talking",
+    "4. Monitor model performance in production",
+    "5. Collect farmer feedback for continuous improvement",
+    "6. Regular retraining with new data"
+  ]
+}

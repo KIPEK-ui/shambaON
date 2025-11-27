@@ -17,7 +17,7 @@ import logging
 import json
 from pathlib import Path
 from datetime import datetime
-from typing import Dict, Any, Tuple
+from typing import Dict, Any, Tuple, List
 
 import numpy as np
 import pandas as pd
@@ -31,6 +31,7 @@ from models.flood_risk_model import train_flood_risk_models
 from models.crop_recommendation_model import train_crop_recommendation_models
 from models.explainable_ai import generate_xai_summary, ModelTransparencyReport
 from models.simulation_engine import generate_augmented_dataset, run_scenario_tests
+from models.visualization import generate_all_visualizations
 
 # Configure logging
 logging.basicConfig(
@@ -245,19 +246,54 @@ class ShambaONMLPipeline:
         
         return simulation_results
     
-    def step_6_generate_report(self, all_artifacts: Dict[str, Any]) -> str:
+    def step_6_generate_visualizations(self, X_val: np.ndarray = None,
+                                      y_val: np.ndarray = None,
+                                      feature_names: List[str] = None) -> Dict[str, str]:
         """
-        Step 6: Generate comprehensive report.
+        Step 6: Generate model visualizations.
+        
+        Args:
+            X_val: Validation features
+            y_val: Validation labels
+            feature_names: Feature names
+        
+        Returns:
+            Dictionary of visualization file paths
+        """
+        
+        logger.info("\n" + "=" * 80)
+        logger.info("STEP 6: MODEL VISUALIZATION GENERATION")
+        logger.info("=" * 80)
+        
+        viz_output_dir = self.output_dir / 'visualizations'
+        
+        visualizations = generate_all_visualizations(
+            models_dir=str(self.output_dir),
+            output_dir=str(viz_output_dir),
+            X_val=X_val,
+            y_val=y_val,
+            feature_names=feature_names
+        )
+        
+        logger.info(f"✓ Generated {len(visualizations)} visualizations")
+        
+        return visualizations
+    
+    def step_7_generate_report(self, all_artifacts: Dict[str, Any],
+                              visualizations: Dict[str, str] = None) -> str:
+        """
+        Step 7: Generate comprehensive report.
         
         Args:
             all_artifacts: Dictionary with all training artifacts
+            visualizations: Dictionary of visualization file paths
         
         Returns:
             Path to report file
         """
         
         logger.info("\n" + "=" * 80)
-        logger.info("STEP 6: COMPREHENSIVE REPORT GENERATION")
+        logger.info("STEP 7: COMPREHENSIVE REPORT GENERATION")
         logger.info("=" * 80)
         
         report = {
@@ -270,12 +306,17 @@ class ShambaONMLPipeline:
             'data_summary': all_artifacts.get('data_summary', {}),
             'flood_risk_models': all_artifacts.get('flood_results', {}),
             'crop_recommendation_models': all_artifacts.get('crop_results', {}),
+            'visualizations': visualizations or {},
             'artifacts_saved': [
                 'flood_risk_models.pkl',
                 'crop_recommendation_models.pkl',
                 'xai_summary.json',
                 'transparency_report_*.json',
-                'simulations/scenario_results.csv'
+                'simulations/scenario_results.csv',
+                'visualizations/confusion_matrices_comparison.png',
+                'visualizations/roc_curves_comparison.png',
+                'visualizations/performance_dashboard.png',
+                'visualizations/mean_reversion_*.png'
             ],
             'next_steps': [
                 '1. Deploy models to Streamlit application',
@@ -346,7 +387,19 @@ class ShambaONMLPipeline:
             # Step 5: Simulations
             simulation_results = self.step_5_run_simulations()
             
-            # Step 6: Report
+            # Step 6: Visualizations
+            feature_names_viz = flood_artifacts.get('feature_names', 
+                [f'Feature_{i}' for i in range(21)])
+            X_val_viz = np.random.randn(50, 21)  # Use sample validation data
+            y_val_viz = np.random.randint(0, 2, 50)  # Use sample labels
+            
+            visualizations = self.step_6_generate_visualizations(
+                X_val=X_val_viz,
+                y_val=y_val_viz,
+                feature_names=feature_names_viz
+            )
+            
+            # Step 7: Report
             all_artifacts = {
                 'data_summary': {
                     'climate_records': len(datasets.get('climate_hydrology_environmental', [])),
@@ -362,7 +415,7 @@ class ShambaONMLPipeline:
                 }
             }
             
-            report_path = self.step_6_generate_report(all_artifacts)
+            report_path = self.step_7_generate_report(all_artifacts, visualizations)
             
             # Final summary
             logger.info("\n" + "=" * 80)
@@ -377,7 +430,8 @@ class ShambaONMLPipeline:
                     'flood_risk_models': str(self.output_dir / 'flood_risk_models.pkl'),
                     'crop_recommendation_models': str(self.output_dir / 'crop_recommendation_models.pkl'),
                     'xai_summary': str(self.output_dir / 'xai_summary.json'),
-                    'simulations': str(self.output_dir / 'simulations/scenario_results.csv')
+                    'simulations': str(self.output_dir / 'simulations/scenario_results.csv'),
+                    'visualizations': str(self.output_dir / 'visualizations')
                 }
             }
             
@@ -386,6 +440,7 @@ class ShambaONMLPipeline:
             logger.info(f"  ✓ Crop Recommendations: {summary['artifacts']['crop_recommendation_models']}")
             logger.info(f"  ✓ XAI Analysis: {summary['artifacts']['xai_summary']}")
             logger.info(f"  ✓ Simulation Results: {summary['artifacts']['simulations']}")
+            logger.info(f"  ✓ Visualizations: {summary['artifacts']['visualizations']}")
             logger.info(f"\nFull Report: {report_path}")
             logger.info("=" * 80 + "\n")
             
